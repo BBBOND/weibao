@@ -43,6 +43,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 提交维保方案
  * Created by 伟阳 on 2015/10/31.
  */
 public class AddRepairPlanActivity extends AppCompatActivity {
@@ -80,7 +81,7 @@ public class AddRepairPlanActivity extends AppCompatActivity {
             if (!planTypeListString.equals("null") && planTypeListString != null) {
                 Log.d("AddRepairPlanActivity", "获取方案类型成功！");
                 List<String> planTypeList = JSON.parseArray(planTypeListString, String.class);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddRepairPlanActivity.this, android.R.layout.simple_list_item_1, planTypeList);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(AddRepairPlanActivity.this, android.R.layout.simple_list_item_1, planTypeList);
                 addrepairplanPlanType.setAdapter(adapter);
                 return true;
             } else {
@@ -227,7 +228,7 @@ public class AddRepairPlanActivity extends AppCompatActivity {
             @Override
             public void run() {
                 ClientResource client = new ClientResource(MyURL.GETDETAILNAMEBYTYPENAME);
-                Representation result = null;
+                Representation result;
                 try {
                     result = client.post(URLEncoder.encode(getResources().getStringArray(R.array.type_name)[2], "utf-8"));
                 } catch (Exception e) {
@@ -260,7 +261,7 @@ public class AddRepairPlanActivity extends AppCompatActivity {
             @Override
             public void run() {
                 ClientResource client = new ClientResource(MyURL.GETREPAIRAPP2);
-                Representation result = null;
+                Representation result;
                 try {
                     result = client.post(appCode);
                 } catch (Exception e) {
@@ -292,7 +293,7 @@ public class AddRepairPlanActivity extends AppCompatActivity {
             @Override
             public void run() {
                 ClientResource client = new ClientResource(MyURL.POSTREPAIRPLAN);
-                Representation result = null;
+                Representation result;
                 try {
                     String str = URLEncoder.encode(JSON.toJSONString(repairPlan), "utf-8");
                     result = client.post(str);

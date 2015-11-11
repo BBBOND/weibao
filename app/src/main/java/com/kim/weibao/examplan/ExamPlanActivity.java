@@ -1,6 +1,9 @@
 package com.kim.weibao.examplan;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +30,10 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -93,14 +100,15 @@ public class ExamPlanActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(Message msg) {
             String repairPlanString = (String) msg.obj;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss", Locale.CHINA);
             if (!repairPlanString.equals("null") && repairPlanString != null) {
                 repairPlan = JSON.parseObject(repairPlanString, RepairPlan.class);
                 examplanPlanDescription.setText(repairPlan.getPlanDescription());
-                examplanPlanMoney.setText("￥" + repairPlan.getPlanMoney());
-                examplanPlanTime.setText(repairPlan.getPlanTime() + "");
+                examplanPlanMoney.setText(String.format("￥%d", repairPlan.getPlanMoney()));
+                examplanPlanTime.setText(sdf.format(repairPlan.getPlanTime()));
                 examplanPlanType.setText(repairPlan.getPlanType());
                 examplanExceptionMess.setText(repairPlan.getExceptionMess());
-                examplanSubmitTime.setText(repairPlan.getSubmitTime() + "");
+                examplanSubmitTime.setText(sdf.format(repairPlan.getSubmitTime()));
                 progressDialog.cancel();
                 return true;
             } else {
@@ -170,8 +178,6 @@ public class ExamPlanActivity extends AppCompatActivity {
         reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog.setTitle("提交中...");
-                progressDialog.show();
                 reject();
             }
         });
@@ -179,8 +185,6 @@ public class ExamPlanActivity extends AppCompatActivity {
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog.setTitle("提交中...");
-                progressDialog.show();
                 accept();
             }
         });
@@ -256,64 +260,101 @@ public class ExamPlanActivity extends AppCompatActivity {
 
     public void accept() {
         // TODO: 2015/11/7
-        new Thread(new Runnable() {
+        final EditText editText = new EditText(ExamPlanActivity.this);
+        editText.setMaxLines(4);
+        editText.setPadding(6, 6, 6, 6);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ExamPlanActivity.this);
+        builder.setTitle("请输入同意原因:");
+        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
             @Override
-            public void run() {
-                ClientResource client = new ClientResource(MyURL.EXAMPLANACCEPT);
-                Representation result = null;
-                try {
-                    result = client.post(repairPlan.getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.obj = "failed";
-                    acceptHandler.sendMessage(message);
-                    return;
-                }
-                try {
-                    String temp = result.getText().trim();
-                    Message message = Message.obtain();
-                    message.obj = temp;
-                    acceptHandler.sendMessage(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.obj = "failed";
-                    acceptHandler.sendMessage(message);
-                }
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialog.setTitle("提交中...");
+                progressDialog.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ClientResource client = new ClientResource(MyURL.EXAMPLANACCEPT);
+                        Representation result = null;
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("userid", App.getUSERID());
+                        map.put("planid", repairPlan.getId());
+                        map.put("examdescription", editText.getText().toString().trim());
+                        try {
+                            result = client.post(URLEncoder.encode(JSON.toJSONString(map), "utf-8"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Message message = Message.obtain();
+                            message.obj = "failed";
+                            acceptHandler.sendMessage(message);
+                            return;
+                        }
+                        try {
+                            String temp = result.getText().trim();
+                            Message message = Message.obtain();
+                            message.obj = temp;
+                            acceptHandler.sendMessage(message);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Message message = Message.obtain();
+                            message.obj = "failed";
+                            acceptHandler.sendMessage(message);
+                        }
+                    }
+                }).start();
             }
-        }).start();
+        });
+        builder.create().show();
     }
 
     public void reject() {
         // TODO: 2015/11/7
-        new Thread(new Runnable() {
+        final EditText editText = new EditText(ExamPlanActivity.this);
+        editText.setMaxLines(4);
+        editText.setPadding(6, 6, 6, 6);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ExamPlanActivity.this);
+        builder.setTitle("请输入驳回原因:");
+        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
-            public void run() {
-                ClientResource client = new ClientResource(MyURL.EXAMPLANREJECT);
-                Representation result = null;
-                try {
-                    result = client.post(repairPlan.getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.obj = "failed";
-                    rejectHandler.sendMessage(message);
-                    return;
-                }
-                try {
-                    String temp = result.getText().trim();
-                    Message message = Message.obtain();
-                    message.obj = temp;
-                    rejectHandler.sendMessage(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.obj = "failed";
-                    rejectHandler.sendMessage(message);
-                }
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialog.setTitle("提交中...");
+                progressDialog.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ClientResource client = new ClientResource(MyURL.EXAMPLANREJECT);
+                        Representation result = null;
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("userid", App.getUSERID());
+                        map.put("planid", repairPlan.getId());
+                        map.put("examdescription", editText.getText().toString().trim());
+                        try {
+                            result = client.post(URLEncoder.encode(JSON.toJSONString(map), "utf-8"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Message message = Message.obtain();
+                            message.obj = "failed";
+                            rejectHandler.sendMessage(message);
+                            return;
+                        }
+                        try {
+                            String temp = result.getText().trim();
+                            Message message = Message.obtain();
+                            message.obj = temp;
+                            rejectHandler.sendMessage(message);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Message message = Message.obtain();
+                            message.obj = "failed";
+                            rejectHandler.sendMessage(message);
+                        }
+                    }
+                }).start();
             }
-        }).start();
+        });
+        builder.create().show();
     }
 
     @Override

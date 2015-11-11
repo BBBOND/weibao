@@ -49,12 +49,13 @@ public class ShowAreaActivity extends AppCompatActivity implements SwipeRefreshL
     private AreaInfoAdapter adapter;
     private List<AreaInfo> areaInfoList = new ArrayList<>();
 
-    Handler getRepairAppList = new Handler(new Handler.Callback() {
+    Handler getAreaInfoList = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             String areaInfoListString = (String) msg.obj;
             if (!areaInfoListString.equals("null") && areaInfoListString != null) {
-                areaInfoList = JSON.parseArray(areaInfoListString, AreaInfo.class);
+                areaInfoList.clear();
+                areaInfoList.addAll(JSON.parseArray(areaInfoListString, AreaInfo.class));
                 adapter.notifyDataSetChanged();
                 swiperefreshlayout.setRefreshing(false);
                 return true;
@@ -94,7 +95,6 @@ public class ShowAreaActivity extends AppCompatActivity implements SwipeRefreshL
         });
     }
 
-
     @Override
     protected void onResume() {
         refresh();
@@ -130,20 +130,21 @@ public class ShowAreaActivity extends AppCompatActivity implements SwipeRefreshL
                     Log.d("ShowAreaActivity", "获取社区信息列表连接失败！");
                     Message message = Message.obtain();
                     message.obj = "null";
-                    getRepairAppList.sendMessage(message);
+                    getAreaInfoList.sendMessage(message);
                     return;
                 }
                 try {
                     String areaInfoListString = result.getText().trim();
+                    Log.d("ShowAreaActivity", areaInfoListString);
                     Message message = Message.obtain();
                     message.obj = areaInfoListString;
-                    getRepairAppList.sendMessage(message);
+                    getAreaInfoList.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d("ShowAreaActivity", "获取社区信息列表连接失败！");
                     Message message = Message.obtain();
                     message.obj = "null";
-                    getRepairAppList.sendMessage(message);
+                    getAreaInfoList.sendMessage(message);
                 }
             }
         }).start();

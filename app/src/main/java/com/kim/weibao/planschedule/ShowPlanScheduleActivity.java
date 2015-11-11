@@ -56,7 +56,7 @@ public class ShowPlanScheduleActivity extends AppCompatActivity implements Swipe
             String repairAppListString = (String) msg.obj;
             if (!repairAppListString.equals("null") && repairAppListString != null) {
                 repairAppList.clear();
-                repairAppList = JSON.parseArray(repairAppListString, RepairApp.class);
+                repairAppList.addAll(JSON.parseArray(repairAppListString, RepairApp.class));
                 adapter.notifyDataSetChanged();
                 swiperefreshlayout.setRefreshing(false);
                 return true;

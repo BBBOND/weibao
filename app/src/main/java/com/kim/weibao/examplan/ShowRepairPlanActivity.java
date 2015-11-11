@@ -54,7 +54,7 @@ public class ShowRepairPlanActivity extends AppCompatActivity implements SwipeRe
             String repairAppListString = (String) msg.obj;
             if (!repairAppListString.equals("null") && repairAppListString != null) {
                 repairAppList.clear();
-                repairAppList = JSON.parseArray(repairAppListString, RepairApp.class);
+                repairAppList.addAll(JSON.parseArray(repairAppListString, RepairApp.class));
                 adapter.notifyDataSetChanged();
                 swiperefreshlayout.setRefreshing(false);
                 return true;
@@ -122,6 +122,7 @@ public class ShowRepairPlanActivity extends AppCompatActivity implements SwipeRe
                     Message message = Message.obtain();
                     message.obj = "null";
                     getRepairAppList.sendMessage(message);
+                    return;
                 }
                 try {
                     String repairAppListString = result.getText().trim();
