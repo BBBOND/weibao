@@ -1,7 +1,6 @@
 package com.kim.weibao.examplan;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -261,10 +261,13 @@ public class ExamPlanActivity extends AppCompatActivity {
     public void accept() {
         // TODO: 2015/11/7
         final EditText editText = new EditText(ExamPlanActivity.this);
+        editText.setLines(2);
         editText.setMaxLines(4);
         editText.setPadding(6, 6, 6, 6);
+        editText.setTextSize(18);
         AlertDialog.Builder builder = new AlertDialog.Builder(ExamPlanActivity.this);
         builder.setTitle("请输入同意原因:");
+        builder.setView(editText);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
@@ -311,10 +314,13 @@ public class ExamPlanActivity extends AppCompatActivity {
     public void reject() {
         // TODO: 2015/11/7
         final EditText editText = new EditText(ExamPlanActivity.this);
+        editText.setLines(2);
         editText.setMaxLines(4);
         editText.setPadding(6, 6, 6, 6);
+        editText.setTextSize(18);
         AlertDialog.Builder builder = new AlertDialog.Builder(ExamPlanActivity.this);
         builder.setTitle("请输入驳回原因:");
+        builder.setView(editText);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override

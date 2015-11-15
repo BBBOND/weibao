@@ -65,7 +65,7 @@ public class UpdatePlanScheduleActivity extends AppCompatActivity {
             String repairAppString = (String) msg.obj;
             if (!repairAppString.equals("null") && repairAppString != null) {
                 Log.d("UpdatePlanSchedule", ">>>>>获取申请单信息成功");
-                repairApp = JSON.parseObject(repairAppString, RepairApp.class);
+                repairApp = JSON.parseArray(repairAppString, RepairApp.class).get(0);
                 updatePlanScheduleMachineName.setText(repairApp.getMachineName());
                 updatePlanScheduleErrorType.setText(repairApp.getErrorType());
                 updatePlanScheduleAppCode.setText(repairApp.getAppCode());
@@ -105,7 +105,7 @@ public class UpdatePlanScheduleActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(Message msg) {
             String temp = (String) msg.obj;
-            if (temp.equals("success")) {
+            if (temp.equals("success") && temp != null) {
                 Log.d("UpdatePlanSchedule", ">>>>>>提交成功");
                 progressDialog.cancel();
                 Toast.makeText(UpdatePlanScheduleActivity.this, "设置完工成功", Toast.LENGTH_SHORT).show();
@@ -244,8 +244,14 @@ public class UpdatePlanScheduleActivity extends AppCompatActivity {
             public void run() {
                 ClientResource client = new ClientResource(MyURL.FINASHPLANSCHEDULE);
                 Representation result = null;
+                PlanSchedule planSchedule = new PlanSchedule();
+                planSchedule.setAppCode(appCode);
+                planSchedule.setRecordUserId(App.getUSERID());
+                planSchedule.setPlanId(repairApp.getPlanId());
+                planSchedule.setAppId(repairApp.getId());
+                planSchedule.setScheduleDescription("完工");
                 try {
-                    result = client.post(appCode);
+                    result = client.post(URLEncoder.encode(JSON.toJSONString(planSchedule), "utf-8"));
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("UpdatePlanSchedule", ">>>>>>>>>设置完工连接失败！");

@@ -125,6 +125,7 @@ public class ShowPlanScheduleActivity extends AppCompatActivity implements Swipe
                     Message message = Message.obtain();
                     message.obj = "null";
                     getRepairAppList.sendMessage(message);
+                    return;
                 }
                 try {
                     String repairAppListString = result.getText().trim();

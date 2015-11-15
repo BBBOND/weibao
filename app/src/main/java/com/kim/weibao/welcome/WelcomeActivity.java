@@ -1,23 +1,23 @@
 package com.kim.weibao.welcome;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.kim.weibao.R;
 import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
-import com.kim.weibao.examplan.ExamPlanActivity;
 import com.kim.weibao.index.IndexActivity;
 import com.kim.weibao.login.LoginActivity;
-import com.kim.weibao.model.basicData.AreaInfo;
 import com.kim.weibao.model.system.UserInfo;
 import com.kim.weibao.utils.UAPSP;
 
@@ -30,6 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by 伟阳 on 2015/10/29.
  */
@@ -37,6 +40,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private static final String USERINFO = "userinfo";
 
+    @Bind(R.id.activity_welcome_version)
+    TextView activityWelcomeVersion;
 
     Handler loginHandler = new Handler(new Handler.Callback() {
         @Override
@@ -84,7 +89,25 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+        ButterKnife.bind(this);
+        activityWelcomeVersion.setText(getVersion());
         init();
+    }
+
+    /**
+     * 获取版本号
+     *
+     * @return 版本号
+     */
+    private String getVersion() {
+        String version = "Version";
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version += info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return version;
     }
 
     public void init() {

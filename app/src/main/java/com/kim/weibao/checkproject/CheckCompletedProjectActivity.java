@@ -11,9 +11,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import com.alibaba.fastjson.JSON;
 import com.kim.weibao.R;
 import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
+import com.kim.weibao.model.business.ProjectCheck;
 import com.kim.weibao.model.business.RepairApp;
 import com.kim.weibao.model.business.RepairPlan;
 
@@ -28,6 +32,8 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -269,34 +275,66 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
     }
 
     public void accept() {
-        // TODO: 2015/11/7
-        new Thread(new Runnable() {
+        // TODO: 2015/11/7 返回验收信息{"result":"","flag":"1/0"}
+        AlertDialog.Builder builder = new AlertDialog.Builder(CheckCompletedProjectActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(CheckCompletedProjectActivity.this);
+        View view = inflater.inflate(R.layout.dialog_projectcheck, null);
+        RatingBar ratingBar = (RatingBar) view.findViewById(R.id.project_check_rating);
+        final EditText editText = (EditText) view.findViewById(R.id.project_check_comment);
+        final float rating = ratingBar.getRating();
+        final String comment = editText.getText().toString().trim();
+        builder.setView(view);
+        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
-            public void run() {
-                ClientResource client = new ClientResource(MyURL.CHECKPROJECTACCEPT);
-                Representation result = null;
-                try {
-                    result = client.post(appCode);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.obj = "failed";
-                    acceptHandler.sendMessage(message);
-                    return;
-                }
-                try {
-                    String temp = result.getText().trim();
-                    Message message = Message.obtain();
-                    message.obj = temp;
-                    acceptHandler.sendMessage(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.obj = "failed";
-                    acceptHandler.sendMessage(message);
+            public void onClick(DialogInterface dialog, int which) {
+                if (comment.equals("") || comment == null) {
+                    editText.setError(getResources().getString(R.string.should_not_empty));
+                    editText.requestFocus();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ClientResource client = new ClientResource(MyURL.CHECKPROJECTACCEPT);
+                            Representation result = null;
+                            // TODO: 2015/11/13
+                            ProjectCheck projectCheck = new ProjectCheck();
+                            projectCheck.setAppCode(appCode);
+                            projectCheck.setAssessTime(new Date());
+                            projectCheck.setAssessUserName(App.getUSERID());
+                            projectCheck.setSeviceSuggest(comment);
+                            projectCheck.setServiceLevel(String.valueOf(rating));
+                            projectCheck.setCheckResult("验收通过");
+                            Map<String, Object> map = new HashMap<String, Object>();
+                            map.put("result", JSON.toJSONString(projectCheck));
+                            map.put("flag", "1");
+                            try {
+                                result = client.post(URLEncoder.encode(JSON.toJSONString(map), "utf-8"));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("CheckCompletedProjectAc", "连接失败");
+                                Message message = Message.obtain();
+                                message.obj = "failed";
+                                acceptHandler.sendMessage(message);
+                                return;
+                            }
+                            try {
+                                String temp = result.getText().trim();
+                                Message message = Message.obtain();
+                                message.obj = temp;
+                                acceptHandler.sendMessage(message);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Log.d("CheckCompletedProjectAc", "获取失败");
+                                Message message = Message.obtain();
+                                message.obj = "failed";
+                                acceptHandler.sendMessage(message);
+                            }
+                        }
+                    }).start();
                 }
             }
-        }).start();
+        });
     }
 
     public void reject() {
@@ -306,10 +344,21 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
             public void run() {
                 ClientResource client = new ClientResource(MyURL.CHECKPROJECTREJECT);
                 Representation result = null;
+                ProjectCheck projectCheck = new ProjectCheck();
+                projectCheck.setAppCode(appCode);
+                projectCheck.setAssessTime(new Date());
+                projectCheck.setAssessUserName(App.getUSERID());
+                projectCheck.setSeviceSuggest("验收未通过");
+                projectCheck.setServiceLevel("0");
+                projectCheck.setCheckResult("验收未通过");
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("result", JSON.toJSONString(projectCheck));
+                map.put("flag", "0");
                 try {
-                    result = client.post(appCode);
+                    result = client.post(URLEncoder.encode(JSON.toJSONString(map), "utf-8"));
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d("ExamPlanActivity", ">>>>>>>>连接失败！");
                     Message message = Message.obtain();
                     message.obj = "failed";
                     rejectHandler.sendMessage(message);
@@ -322,6 +371,7 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
                     rejectHandler.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Log.d("ExamPlanActivity", ">>>>>>>>获取失败！");
                     Message message = Message.obtain();
                     message.obj = "failed";
                     rejectHandler.sendMessage(message);
