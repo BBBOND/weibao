@@ -16,12 +16,10 @@ import android.widget.ListView;
 
 import com.alibaba.fastjson.JSON;
 import com.kim.weibao.R;
-import com.kim.weibao.addrepairplan.RepairAppAdapter;
 import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
 import com.kim.weibao.model.basicData.AreaInfo;
-import com.kim.weibao.model.business.RepairApp;
-import com.kim.weibao.planschedule.UpdatePlanScheduleActivity;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -110,7 +108,7 @@ public class ShowAreaActivity extends AppCompatActivity implements SwipeRefreshL
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETAREAINFOS);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(), MyURL.GETAREAINFOS));
                 Representation result = null;
                 Map<String, Object> map = new HashMap<String, Object>();
                 String userRole = App.getROLE();

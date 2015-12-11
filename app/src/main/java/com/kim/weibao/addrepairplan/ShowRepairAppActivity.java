@@ -46,6 +46,7 @@ public class ShowRepairAppActivity extends AppCompatActivity implements SwipeRef
     @Bind(R.id.swiperefreshlayout)
     SwipeRefreshLayout swiperefreshlayout;
 
+    private int page = 0;
     private RepairAppAdapter adapter;
     private List<RepairApp> repairAppList = new ArrayList<>();
 
@@ -69,6 +70,13 @@ public class ShowRepairAppActivity extends AppCompatActivity implements SwipeRef
                 swiperefreshlayout.setRefreshing(false);
                 return false;
             }
+        }
+    });
+
+    Handler loadMoreHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            return false;
         }
     });
 
@@ -124,6 +132,7 @@ public class ShowRepairAppActivity extends AppCompatActivity implements SwipeRef
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("userid", App.getUSERID());
                 map.put("step", 0);
+//                map.put("page", 0);
                 try {
                     result = client.post(JSON.toJSONString(map));
                 } catch (Exception e) {
@@ -149,6 +158,14 @@ public class ShowRepairAppActivity extends AppCompatActivity implements SwipeRef
         }).start();
     }
 
+    public void loadMore() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }).start();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

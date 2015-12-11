@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.kim.weibao.R;
 import com.kim.weibao.content.MyURL;
 import com.kim.weibao.model.basicData.AreaInfo;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -100,7 +101,7 @@ public class DetailedAreaActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETAREAINFOBYID);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETAREAINFOBYID));
                 Representation result = null;
                 try {
                     result = client.post(areaId);

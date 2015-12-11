@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -20,8 +19,8 @@ import com.kim.weibao.R;
 import com.kim.weibao.addrepairplan.RepairAppAdapter;
 import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
-import com.kim.weibao.examplan.ExamPlanActivity;
 import com.kim.weibao.model.business.RepairApp;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -112,7 +111,7 @@ public class ShowPlanScheduleActivity extends AppCompatActivity implements Swipe
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRAPP3);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(), MyURL.GETREPAIRAPP3));
                 Representation result = null;
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("userid", App.getUSERID());

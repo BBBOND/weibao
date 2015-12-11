@@ -35,6 +35,7 @@ import com.kim.weibao.addrepairapp.zxing.utils.BeepManager;
 import com.kim.weibao.addrepairapp.zxing.utils.InactivityTimer;
 import com.kim.weibao.addrepairapp.zxing.utils.QRScannerActivityHandler;
 import com.kim.weibao.content.MyURL;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -157,7 +158,7 @@ public class QRScannerActivity extends AppCompatActivity implements SurfaceHolde
             @Override
             public void run() {
                 //  获取设备信息
-                ClientResource client = new ClientResource(MyURL.GETMACHINEINFOBYMACHINECODE);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(QRScannerActivity.this,MyURL.GETMACHINEINFOBYMACHINECODE));
                 Representation result = null;
                 try {
                     result = client.post(machineCode);

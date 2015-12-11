@@ -2,6 +2,7 @@
     <string name="app_name">维保</string>
     <string name="view_login">登陆</string>
     <string name="view_index">主页</string>
+    <string name="action_settings">设置</string>
     <string name="view_repairapp">维修申请</string>
     <string name="view_scanner">扫描二维码</string>
     <string name="view_repairplan">维保方案</string>

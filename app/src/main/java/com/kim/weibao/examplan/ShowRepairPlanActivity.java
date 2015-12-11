@@ -20,6 +20,7 @@ import com.kim.weibao.addrepairplan.RepairAppAdapter;
 import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
 import com.kim.weibao.model.business.RepairApp;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -109,7 +110,7 @@ public class ShowRepairPlanActivity extends AppCompatActivity implements SwipeRe
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRAPP3);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETREPAIRAPP3));
                 Representation result = null;
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("userid", App.getUSERID());

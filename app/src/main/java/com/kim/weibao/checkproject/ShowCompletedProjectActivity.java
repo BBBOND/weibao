@@ -19,9 +19,8 @@ import com.kim.weibao.R;
 import com.kim.weibao.addrepairplan.RepairAppAdapter;
 import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
-import com.kim.weibao.examplan.ExamPlanActivity;
 import com.kim.weibao.model.business.RepairApp;
-import com.kim.weibao.planschedule.UpdatePlanScheduleActivity;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -55,7 +54,7 @@ public class ShowCompletedProjectActivity extends AppCompatActivity implements S
             if (!repairAppListString.equals("null") && repairAppListString != null) {
                 List<RepairApp> repairAppList = JSON.parseArray(repairAppListString, RepairApp.class);
                 adapter = new RepairAppAdapter(ShowCompletedProjectActivity.this, R.layout.item_repair, repairAppList);
-                list.removeAllViewsInLayout();
+//                list.removeAllViewsInLayout();
                 list.setAdapter(adapter);
                 swiperefreshlayout.setRefreshing(false);
                 return true;
@@ -84,7 +83,7 @@ public class ShowCompletedProjectActivity extends AppCompatActivity implements S
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RepairApp repairApp = adapter.getItem(position);
-                Intent intent = new Intent(ShowCompletedProjectActivity.this, UpdatePlanScheduleActivity.class);
+                Intent intent = new Intent(ShowCompletedProjectActivity.this, CheckCompletedProjectActivity.class);
                 intent.putExtra("appcode", repairApp.getAppCode());
                 startActivity(intent);
             }
@@ -106,7 +105,7 @@ public class ShowCompletedProjectActivity extends AppCompatActivity implements S
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRAPP3);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETREPAIRAPP3));
                 Representation result = null;
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("userid", App.getUSERID());

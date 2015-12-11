@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +24,7 @@ import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
 import com.kim.weibao.model.business.RepairApp;
 import com.kim.weibao.model.business.RepairPlan;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -195,7 +195,7 @@ public class ExamPlanActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRAPP2);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETREPAIRAPP2));
                 Representation result = null;
                 try {
                     result = client.post(appCode);
@@ -227,7 +227,7 @@ public class ExamPlanActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRPLANBYAPPCODEANDPLANID);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETREPAIRPLANBYAPPCODEANDPLANID));
                 Representation result = null;
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("appcode", appCode);
@@ -278,7 +278,7 @@ public class ExamPlanActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        ClientResource client = new ClientResource(MyURL.EXAMPLANACCEPT);
+                        ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.EXAMPLANACCEPT));
                         Representation result = null;
                         Map<String, Object> map = new HashMap<String, Object>();
                         map.put("userid", App.getUSERID());
@@ -330,7 +330,7 @@ public class ExamPlanActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        ClientResource client = new ClientResource(MyURL.EXAMPLANREJECT);
+                        ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.EXAMPLANREJECT));
                         Representation result = null;
                         Map<String, Object> map = new HashMap<String, Object>();
                         map.put("userid", App.getUSERID());

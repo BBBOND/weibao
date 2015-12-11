@@ -26,6 +26,7 @@ import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
 import com.kim.weibao.model.business.RepairApp;
 import com.kim.weibao.model.business.RepairPlan;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -227,7 +228,7 @@ public class AddRepairPlanActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETDETAILNAMEBYTYPENAME);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(AddRepairPlanActivity.this, MyURL.GETDETAILNAMEBYTYPENAME));
                 Representation result;
                 try {
                     result = client.post(URLEncoder.encode(getResources().getStringArray(R.array.type_name)[2], "utf-8"));
@@ -260,7 +261,7 @@ public class AddRepairPlanActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRAPP2);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(AddRepairPlanActivity.this, MyURL.GETREPAIRAPP2));
                 Representation result;
                 try {
                     result = client.post(appCode);
@@ -292,7 +293,7 @@ public class AddRepairPlanActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.POSTREPAIRPLAN);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(AddRepairPlanActivity.this,MyURL.POSTREPAIRPLAN));
                 Representation result;
                 try {
                     String str = URLEncoder.encode(JSON.toJSONString(repairPlan), "utf-8");

@@ -14,11 +14,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +26,12 @@ import com.kim.weibao.content.MyURL;
 import com.kim.weibao.model.basicData.AreaInfo;
 import com.kim.weibao.model.basicData.MachineInfo;
 import com.kim.weibao.model.business.RepairApp;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
@@ -248,7 +245,7 @@ public class AddRepairAppActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETAREAINFOBYID);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(AddRepairAppActivity.this,MyURL.GETAREAINFOBYID));
                 Representation result = null;
                 try {
                     result = client.post(areaId);
@@ -280,7 +277,7 @@ public class AddRepairAppActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETDETAILNAMEBYTYPENAME);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(AddRepairAppActivity.this,MyURL.GETDETAILNAMEBYTYPENAME));
                 Representation result = null;
                 try {
                     result = client.post(URLEncoder.encode(getResources().getStringArray(R.array.type_name)[0], "utf-8"));
@@ -313,7 +310,7 @@ public class AddRepairAppActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETDETAILNAMEBYTYPENAME);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(AddRepairAppActivity.this,MyURL.GETDETAILNAMEBYTYPENAME));
                 Representation result = null;
                 try {
                     result = client.post(URLEncoder.encode(getResources().getStringArray(R.array.type_name)[1], "utf-8"));
@@ -346,7 +343,7 @@ public class AddRepairAppActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.POSTREPAIRAPP);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(AddRepairAppActivity.this,MyURL.POSTREPAIRAPP));
                 Representation result = null;
                 String repairAppString = JSON.toJSONString(repairApp);
                 Log.d("AddRepairAppActivity", "repairAppString" + repairAppString);

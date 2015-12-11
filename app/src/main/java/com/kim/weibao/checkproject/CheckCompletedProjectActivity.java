@@ -27,6 +27,7 @@ import com.kim.weibao.content.MyURL;
 import com.kim.weibao.model.business.ProjectCheck;
 import com.kim.weibao.model.business.RepairApp;
 import com.kim.weibao.model.business.RepairPlan;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -78,7 +79,7 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
         public boolean handleMessage(Message msg) {
             String repairAppString = (String) msg.obj;
             if (!repairAppString.equals("null") && repairAppString != null) {
-                repairApp = JSON.parseObject(repairAppString, RepairApp.class);
+                repairApp = JSON.parseArray(repairAppString, RepairApp.class).get(0);
                 checkProjectMachineName.setText(repairApp.getMachineName());
                 checkProjectErrorType.setText(repairApp.getErrorType());
                 checkProjectAppCode.setText(repairApp.getAppCode());
@@ -138,8 +139,8 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
         public boolean handleMessage(Message msg) {
             String temp = (String) msg.obj;
             if (temp.equals("success")) {
-                Toast.makeText(CheckCompletedProjectActivity.this, "返工", Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
+                Toast.makeText(CheckCompletedProjectActivity.this, "返工", Toast.LENGTH_SHORT).show();
                 finish();
                 return true;
             } else {
@@ -211,7 +212,7 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRAPP2);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETREPAIRAPP2));
                 Representation result = null;
                 try {
                     result = client.post(appCode);
@@ -243,7 +244,7 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETREPAIRPLANBYAPPCODEANDPLANID);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETREPAIRPLANBYAPPCODEANDPLANID));
                 Representation result = null;
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("appcode", appCode);
@@ -295,7 +296,7 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            ClientResource client = new ClientResource(MyURL.CHECKPROJECTACCEPT);
+                            ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.CHECKPROJECTACCEPT));
                             Representation result = null;
                             // TODO: 2015/11/13
                             ProjectCheck projectCheck = new ProjectCheck();
@@ -342,7 +343,7 @@ public class CheckCompletedProjectActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.CHECKPROJECTREJECT);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.CHECKPROJECTREJECT));
                 Representation result = null;
                 ProjectCheck projectCheck = new ProjectCheck();
                 projectCheck.setAppCode(appCode);

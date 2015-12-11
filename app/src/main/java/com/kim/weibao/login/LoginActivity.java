@@ -12,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -26,10 +29,10 @@ import com.kim.weibao.content.App;
 import com.kim.weibao.content.MyURL;
 import com.kim.weibao.index.IndexActivity;
 import com.kim.weibao.model.system.UserInfo;
+import com.kim.weibao.setting.SettingActivity;
 import com.kim.weibao.utils.UAPSP;
+import com.kim.weibao.utils.URLUtil;
 
-
-import org.restlet.Context;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 
@@ -116,6 +119,24 @@ public class LoginActivity extends AppCompatActivity {
         initView();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.ip_setting, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(LoginActivity.this, SettingActivity.class));
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private void initView() {
         passwordTil.getEditText().setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -187,8 +208,7 @@ public class LoginActivity extends AppCompatActivity {
                 map.put("username", username);
                 map.put("password", password);
 
-                ClientResource client = new ClientResource(new Context(), MyURL.LOGIN);
-//                client.getContext().getParameters().add("socketTimeout", String.valueOf(8000));
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(), MyURL.LOGIN));
                 // 上传用户名密码
                 Representation result = null;
                 try {
@@ -233,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETSYSTEMMENU);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(), MyURL.GETSYSTEMMENU));
 //                client.getContext().getParameters().add("socketTimeout", String.valueOf(8000));
                 Representation result = null;
                 try {

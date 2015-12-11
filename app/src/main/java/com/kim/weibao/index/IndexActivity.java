@@ -30,6 +30,7 @@ import com.kim.weibao.examplan.ShowRepairPlanActivity;
 import com.kim.weibao.login.LoginActivity;
 import com.kim.weibao.planschedule.ShowPlanScheduleActivity;
 import com.kim.weibao.showarea.ShowAreaActivity;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -104,7 +105,7 @@ public class IndexActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETUSERINFO);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(),MyURL.GETUSERINFO));
                 Representation result = null;
                 try {
                     result = client.post(App.getUSERID());

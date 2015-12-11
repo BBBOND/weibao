@@ -20,6 +20,7 @@ import com.kim.weibao.index.IndexActivity;
 import com.kim.weibao.login.LoginActivity;
 import com.kim.weibao.model.system.UserInfo;
 import com.kim.weibao.utils.UAPSP;
+import com.kim.weibao.utils.URLUtil;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
@@ -125,7 +126,7 @@ public class WelcomeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.LOGIN);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(), MyURL.LOGIN));
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("username", username);
                 map.put("password", password);
@@ -157,7 +158,7 @@ public class WelcomeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ClientResource client = new ClientResource(MyURL.GETSYSTEMMENU);
+                ClientResource client = new ClientResource(URLUtil.getRealURL(getApplicationContext(), MyURL.GETSYSTEMMENU));
                 Representation result = null;
                 try {
                     result = client.post(userId);
